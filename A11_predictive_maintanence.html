@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Predictive Maintenance Control Center</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .badge-critical { background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-high { background-color: #ffedd5; color: #9a3412; border: 1px solid #fb923c; }
+    .badge-medium { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-low { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .chart-grid { stroke: var(--border); stroke-dasharray: 4; }
+    .chart-line { fill: none; stroke-width: 2.5; stroke-linecap: round; }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6 min-h-screen">
+
+  <!-- Header Banner -->
+  <header class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-[var(--border)] gap-4">
+    <div>
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🏭</span>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-[var(--foreground)]">
+            AI Predictive Maintenance Control Center
+          </h1>
+          <p class="text-sm text-[var(--muted-foreground)]">
+            Autonomous Industrial Telemetry Monitoring, Failure Forecasting & Schedule-Aware Actions
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> SCADA Stream Live
+      </span>
+      <span class="px-3 py-1 rounded-full text-xs font-medium bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)]">
+        10 Assets Monitored
+      </span>
+    </div>
+  </header>
+
+  <!-- Prototype Notice Alert -->
+  <div class="mb-6 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-xs flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="text-base">⚠️</span>
+      <span><strong>Prototype & Synthetic Telemetry Notice:</strong> Operational sensor streams and model predictions are generated for industrial demonstration and algorithmic validation.</span>
+    </div>
+    <span class="font-semibold uppercase tracking-wider text-[11px] opacity-75">Plant Demo Mode</span>
+  </div>
+
+  <!-- KPI Metrics Grid -->
+  <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Total Machines</p>
+      <p class="text-2xl font-bold mt-1 text-[var(--foreground)]">10</p>
+      <p class="text-[11px] text-[var(--muted-foreground)] mt-0.5">Active Line Assets</p>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Healthy Assets</p>
+      <p class="text-2xl font-bold mt-1 text-emerald-600">6</p>
+      <p class="text-[11px] text-emerald-600 mt-0.5">Nominal envelope</p>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Machines at Risk</p>
+      <p class="text-2xl font-bold mt-1 text-amber-600">4</p>
+      <p class="text-[11px] text-amber-600 mt-0.5">Requires PM</p>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Critical Machines</p>
+      <p class="text-2xl font-bold mt-1 text-rose-600">4</p>
+      <p class="text-[11px] text-rose-600 mt-0.5">High failure hazard</p>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Predicted Failures</p>
+      <p class="text-2xl font-bold mt-1 text-rose-600">4</p>
+      <p class="text-[11px] text-rose-600 mt-0.5">Within 24 Hours</p>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Downtime Avoided</p>
+      <p class="text-2xl font-bold mt-1 text-blue-600">43.5 <span class="text-sm font-normal">hrs</span></p>
+      <p class="text-[11px] text-blue-600 mt-0.5">Saved by proactive PM</p>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm col-span-2 sm:col-span-1">
+      <p class="text-xs text-[var(--muted-foreground)] font-medium">Cost Avoided</p>
+      <p class="text-2xl font-bold mt-1 text-emerald-600">$254,719</p>
+      <p class="text-[11px] text-emerald-600 mt-0.5">Net avoided loss</p>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <div class="flex overflow-x-auto gap-2 border-b border-[var(--border)] mb-6 pb-2 text-sm">
+    <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn px-4 py-2 font-medium rounded-lg bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] shadow-sm">
+      🏭 Fleet Overview
+    </button>
+    <button onclick="switchTab('deepdive')" id="tab-btn-deepdive" class="tab-btn px-4 py-2 font-medium rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+      🔍 Machine Deep-Dive
+    </button>
+    <button onclick="switchTab('schedule')" id="tab-btn-schedule" class="tab-btn px-4 py-2 font-medium rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+      📅 Production & Maintenance Windows
+    </button>
+    <button onclick="switchTab('approvals')" id="tab-btn-approvals" class="tab-btn px-4 py-2 font-medium rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+      🛠️ Human-in-the-Loop Approvals
+    </button>
+    <button onclick="switchTab('feedback')" id="tab-btn-feedback" class="tab-btn px-4 py-2 font-medium rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+      🔄 Feedback Loop
+    </button>
+    <button onclick="switchTab('diagnostics')" id="tab-btn-diagnostics" class="tab-btn px-4 py-2 font-medium rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+      📈 ML Diagnostics
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 1: FLEET OVERVIEW -->
+  <!-- ========================================== -->
+  <div id="tab-overview" class="tab-content space-y-6">
+    <!-- Active Critical Alerts Banner -->
+    <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4">
+      <div class="flex items-center gap-2 mb-2 text-rose-600 font-semibold text-sm">
+        <span>🚨</span>
+        <span>HIGH & CRITICAL PRIORITY ALERTS (4 ASSETS REQUIRE INTERVENTION)</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 bg-[var(--card)] border border-rose-200 dark:border-rose-900 rounded-lg">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-rose-600">🔴 M-004 — Spindle Bearing Assembly</span>
+            <span class="font-semibold text-rose-700">Fail Prob: 85.0% | Risk: 99/100</span>
+          </div>
+          <p class="text-[var(--muted-foreground)]">Vibration +337.7% above baseline, Spindle Temp 64°C. Optimal PM: Today 18:30–21:00.</p>
+        </div>
+        <div class="p-3 bg-[var(--card)] border border-rose-200 dark:border-rose-900 rounded-lg">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-rose-600">🔴 M-002 — Motor Stator & Cooling</span>
+            <span class="font-semibold text-rose-700">Fail Prob: 85.0% | Risk: 100/100</span>
+          </div>
+          <p class="text-[var(--muted-foreground)]">Power draw +66.3%, Motor winding temp +61.3°C. Optimal PM: Today 16:30–20:30.</p>
+        </div>
+        <div class="p-3 bg-[var(--card)] border border-rose-200 dark:border-rose-900 rounded-lg">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-rose-600">🔴 M-007 — Centrifugal Compressor Valve</span>
+            <span class="font-semibold text-rose-700">Fail Prob: 85.0% | Risk: 99/100</span>
+          </div>
+          <p class="text-[var(--muted-foreground)]">Discharge pressure drop -61.6%, hunting power draw. Optimal PM: Today 17:30–20:30.</p>
+        </div>
+        <div class="p-3 bg-[var(--card)] border border-rose-200 dark:border-rose-900 rounded-lg">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-rose-600">🔴 M-009 — Heavy Reduction Gearbox</span>
+            <span class="font-semibold text-rose-700">Fail Prob: 85.0% | Risk: 87/100</span>
+          </div>
+          <p class="text-[var(--muted-foreground)]">RPM fluctuation ±134.5 RPM, harmonic vibration +106.6%. Optimal PM: Today 19:30–22:00.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Machine Health Table -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
+      <div class="px-5 py-4 border-b border-[var(--border)] flex justify-between items-center">
+        <h2 class="text-base font-semibold text-[var(--foreground)]">Machine Fleet Health & Risk Assessment</h2>
+        <span class="text-xs text-[var(--muted-foreground)]">Click any row to view in-depth telemetry</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-[var(--background)] text-[var(--muted-foreground)] uppercase text-[11px] font-semibold border-b border-[var(--border)]">
+            <tr>
+              <th class="px-4 py-3">Machine ID</th>
+              <th class="px-4 py-3">Asset Type</th>
+              <th class="px-4 py-3">Health Status</th>
+              <th class="px-4 py-3">Risk Score</th>
+              <th class="px-4 py-3">24h Failure Prob</th>
+              <th class="px-4 py-3">Likely Failure Mode</th>
+              <th class="px-4 py-3">Optimal PM Window</th>
+              <th class="px-4 py-3">Net Avoided Cost</th>
+              <th class="px-4 py-3">Action</th>
+            </tr>
+          </thead>
+          <tbody id="fleet-table-body" class="divide-y divide-[var(--border)]">
+            <!-- Rendered by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Overview Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <!-- Risk Ranking -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+        <h3 class="text-sm font-semibold mb-3">1. Machine Operational Risk Ranking (0–100)</h3>
+        <div id="risk-bars-container" class="space-y-2.5">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+      <!-- Failure Probabilities Across Horizons -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+        <h3 class="text-sm font-semibold mb-3">2. Multi-Horizon Failure Probabilities</h3>
+        <div id="prob-bars-container" class="space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 2: MACHINE DEEP-DIVE -->
+  <!-- ========================================== -->
+  <div id="tab-deepdive" class="tab-content hidden space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[var(--card)] border border-[var(--border)] p-4 rounded-xl">
+      <div class="flex items-center gap-3">
+        <label for="machine-selector" class="text-xs font-semibold text-[var(--muted-foreground)]">SELECT MACHINE:</label>
+        <select id="machine-selector" onchange="renderMachineDetail(this.value)" class="bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm font-bold text-[var(--foreground)] focus:outline-none">
+          <option value="M-004">M-004 — High-Speed CNC Lathe Spindle (Critical)</option>
+          <option value="M-002">M-002 — Induction Motor & Drive (Critical)</option>
+          <option value="M-007">M-007 — Centrifugal Air Compressor (Critical)</option>
+          <option value="M-009">M-009 — Heavy Gearbox & Drive (High)</option>
+          <option value="M-001">M-001 — 5-Axis CNC Milling Center (Healthy)</option>
+          <option value="M-003">M-003 — Hydraulic Deep Drawing Press (Healthy)</option>
+          <option value="M-005">M-005 — Injection Molding Machine (Healthy)</option>
+          <option value="M-006">M-006 — Robotic Welding Cell (Healthy)</option>
+          <option value="M-008">M-008 — Automated Sorter & Conveyor (Healthy)</option>
+          <option value="M-010">M-010 — Fiber Laser Cutting Gantry (Healthy)</option>
+        </select>
+      </div>
+      <div id="detail-header-badges" class="flex items-center gap-2">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Machine Metadata Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="bg-[var(--card)] border border-[var(--border)] p-3 rounded-lg">
+        <p class="text-[11px] text-[var(--muted-foreground)]">Manufacturer</p>
+        <p id="m-mfg" class="text-sm font-bold mt-0.5">-</p>
+      </div>
+      <div class="bg-[var(--card)] border border-[var(--border)] p-3 rounded-lg">
+        <p class="text-[11px] text-[var(--muted-foreground)]">Asset Criticality</p>
+        <p id="m-crit" class="text-sm font-bold mt-0.5">-</p>
+      </div>
+      <div class="bg-[var(--card)] border border-[var(--border)] p-3 rounded-lg">
+        <p class="text-[11px] text-[var(--muted-foreground)]">Accumulated Hours</p>
+        <p id="m-hours" class="text-sm font-bold mt-0.5">-</p>
+      </div>
+      <div class="bg-[var(--card)] border border-[var(--border)] p-3 rounded-lg">
+        <p class="text-[11px] text-[var(--muted-foreground)]">Anomaly Score</p>
+        <p id="m-anom" class="text-sm font-bold mt-0.5">-</p>
+      </div>
+      <div class="bg-[var(--card)] border border-[var(--border)] p-3 rounded-lg col-span-2 md:col-span-1">
+        <p class="text-[11px] text-[var(--muted-foreground)]">Operational Risk</p>
+        <p id="m-risk" class="text-sm font-bold mt-0.5">-</p>
+      </div>
+    </div>
+
+    <!-- Multi-Sensor Visual Telemetry Curves -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-[var(--card)] border border-[var(--border)] p-4 rounded-xl">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-xs font-semibold">Temperature (°C) Trend (Last 48 Hours)</h4>
+          <span id="temp-val-badge" class="text-xs font-bold text-rose-500">64.0°C</span>
+        </div>
+        <svg id="svg-temp" class="w-full h-32" viewBox="0 0 400 120"></svg>
+        <div class="flex justify-between text-[11px] text-[var(--muted-foreground)] mt-1">
+          <span>-48h</span>
+          <span class="text-emerald-500">--- Baseline Mean</span>
+          <span>Current (T=0)</span>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] p-4 rounded-xl">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-xs font-semibold">Vibration Velocity (mm/s RMS)</h4>
+          <span id="vib-val-badge" class="text-xs font-bold text-amber-500">6.12 mm/s</span>
+        </div>
+        <svg id="svg-vib" class="w-full h-32" viewBox="0 0 400 120"></svg>
+        <div class="flex justify-between text-[11px] text-[var(--muted-foreground)] mt-1">
+          <span>-48h</span>
+          <span class="text-rose-500">--- ISO Alert Threshold</span>
+          <span>Current (T=0)</span>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] p-4 rounded-xl">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-xs font-semibold">Electrical Power Consumption (kW)</h4>
+          <span id="power-val-badge" class="text-xs font-bold text-purple-500">18.3 kW</span>
+        </div>
+        <svg id="svg-power" class="w-full h-32" viewBox="0 0 400 120"></svg>
+        <div class="flex justify-between text-[11px] text-[var(--muted-foreground)] mt-1">
+          <span>-48h</span>
+          <span class="text-emerald-500">--- Baseline</span>
+          <span>Current (T=0)</span>
+        </div>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] p-4 rounded-xl">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-xs font-semibold">Pressure (bar) & RPM Dynamics</h4>
+          <span id="press-val-badge" class="text-xs font-bold text-cyan-500">6.4 bar | 4,210 RPM</span>
+        </div>
+        <svg id="svg-press" class="w-full h-32" viewBox="0 0 400 120"></svg>
+        <div class="flex justify-between text-[11px] text-[var(--muted-foreground)] mt-1">
+          <span>-48h</span>
+          <span>Pressure (Cyan) / RPM (Gray)</span>
+          <span>Current (T=0)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Agent Reasoning & Financial Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- AI Explainability Assessment -->
+      <div class="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🧠</span>
+          <h3 class="text-sm font-semibold">AI Agent Explainable Diagnostic Assessment</h3>
+        </div>
+        <div id="agent-explanation-box" class="text-xs leading-relaxed text-[var(--foreground)] bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-2">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold text-[var(--muted-foreground)] uppercase mb-2">Top Contributing Abnormal Telemetry Features:</h4>
+          <div id="abnormal-features-list" class="space-y-1.5 text-xs">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial & Scheduling Recommendations -->
+      <div class="bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl space-y-4">
+        <h3 class="text-sm font-semibold">💰 Financial Impact & Scheduling</h3>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between p-2 rounded bg-[var(--background)]">
+            <span class="text-[var(--muted-foreground)]">Planned PM Cost:</span>
+            <span id="cost-planned" class="font-bold">$1,600.00</span>
+          </div>
+          <div class="flex justify-between p-2 rounded bg-[var(--background)]">
+            <span class="text-[var(--muted-foreground)]">Emergency Repair:</span>
+            <span id="cost-emerg" class="font-bold text-rose-500">$6,500.00</span>
+          </div>
+          <div class="flex justify-between p-2 rounded bg-[var(--background)]">
+            <span class="text-[var(--muted-foreground)]">Downtime Loss:</span>
+            <span id="cost-downtime" class="font-bold text-rose-500">$51,750.00</span>
+          </div>
+          <div class="flex justify-between p-2 rounded bg-[var(--background)]">
+            <span class="text-[var(--muted-foreground)]">Production Loss:</span>
+            <span id="cost-prodloss" class="font-bold text-rose-500">$14,734.50</span>
+          </div>
+          <div class="flex justify-between p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 font-bold">
+            <span>Net Avoided Loss:</span>
+            <span id="cost-savings">$71,384.50</span>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-[var(--border)] space-y-2 text-xs">
+          <h4 class="font-semibold text-amber-600 flex items-center gap-1.5">
+            <span>⏱️</span> Optimal Maintenance Window
+          </h4>
+          <p id="sched-window-text" class="text-[var(--foreground)] font-medium">Today 18:30 – 21:00 (3.0 hrs)</p>
+          <p id="sched-rationale-text" class="text-[var(--muted-foreground)] text-[11px] leading-normal">
+            Avoids interrupting high-priority production order PO-1005 (08:00–18:00). Scheduled during shift buffer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 3: PRODUCTION WINDOWS -->
+  <!-- ========================================== -->
+  <div id="tab-schedule" class="tab-content hidden space-y-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl">
+      <h3 class="text-sm font-semibold mb-2">📅 7-Day Manufacturing Production Schedule & Maintenance Buffers</h3>
+      <p class="text-xs text-[var(--muted-foreground)] mb-4">
+        The agent automatically identifies optimal maintenance windows without interrupting high-priority (P1) orders.
+      </p>
+
+      <!-- Visual Gantt Chart -->
+      <div class="space-y-3 mb-6">
+        <div class="text-xs font-semibold text-[var(--muted-foreground)]">SCHEDULE GANTT TIMELINE:</div>
+        <div class="space-y-2">
+          <div class="flex items-center gap-3 text-xs">
+            <span class="w-16 font-mono font-bold">M-004</span>
+            <div class="flex-1 h-8 bg-[var(--background)] rounded flex overflow-hidden border border-[var(--border)]">
+              <div class="bg-rose-500 text-white text-[10px] flex items-center justify-center font-bold" style="width: 55%">PO-1005 (P1) 08:00–18:00</div>
+              <div class="bg-amber-400 text-amber-900 text-[10px] flex items-center justify-center font-bold animate-pulse" style="width: 20%">🔧 OPTIMAL PM WINDOW 18:30–21:00</div>
+              <div class="bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold" style="width: 25%">PO-1006 (P3) 22:30–04:30</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="w-16 font-mono font-bold">M-002</span>
+            <div class="flex-1 h-8 bg-[var(--background)] rounded flex overflow-hidden border border-[var(--border)]">
+              <div class="bg-rose-500 text-white text-[10px] flex items-center justify-center font-bold" style="width: 50%">PO-1003 (P1) 06:00–16:00</div>
+              <div class="bg-amber-400 text-amber-900 text-[10px] flex items-center justify-center font-bold animate-pulse" style="width: 25%">🔧 OPTIMAL PM WINDOW 16:30–20:30</div>
+              <div class="bg-blue-500 text-white text-[10px] flex items-center justify-center font-bold" style="width: 25%">PO-1004 (P2) 21:00–03:00</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="w-16 font-mono font-bold">M-007</span>
+            <div class="flex-1 h-8 bg-[var(--background)] rounded flex overflow-hidden border border-[var(--border)]">
+              <div class="bg-rose-500 text-white text-[10px] flex items-center justify-center font-bold" style="width: 60%">PO-1009 (P1) 07:00–17:00</div>
+              <div class="bg-amber-400 text-amber-900 text-[10px] flex items-center justify-center font-bold animate-pulse" style="width: 20%">🔧 OPTIMAL PM WINDOW 17:30–20:30</div>
+              <div class="bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold" style="width: 20%">IDLE BUFFER</div>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-4 text-xs text-[var(--muted-foreground)] pt-2">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-rose-500 rounded"></span> P1 High Priority Order</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-blue-500 rounded"></span> P2 Regular Order</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-emerald-500 rounded"></span> P3 Flexible / Idle Buffer</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-amber-400 rounded"></span> Recommended Preventive Maintenance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 4: HUMAN APPROVALS -->
+  <!-- ========================================== -->
+  <div id="tab-approvals" class="tab-content hidden space-y-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl space-y-4">
+      <h3 class="text-sm font-semibold">🛠️ Supervisor Authorization & Human-in-the-Loop Workflow</h3>
+      <p class="text-xs text-[var(--muted-foreground)]">
+        The system does NOT execute physical maintenance automatically. Authorize or reschedule actions below.
+      </p>
+
+      <div class="p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="font-bold text-sm text-[var(--foreground)]">Pending Work Order: M-004 Spindle Bearings</span>
+            <p class="text-xs text-[var(--muted-foreground)]">Window: Today 18:30–21:00 (3.0 hrs) | Risk: 99/100 (Critical)</p>
+          </div>
+          <span class="badge-critical px-2.5 py-1 text-xs font-bold rounded">Awaiting Approval</span>
+        </div>
+
+        <div class="flex flex-wrap gap-2 pt-2">
+          <button onclick="recordDecision('M-004', 'APPROVED', 'Today 18:30–21:00')" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm">
+            ✅ APPROVE MAINTENANCE
+          </button>
+          <button onclick="recordDecision('M-004', 'POSTPONED', 'Tomorrow Night Shift')" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg shadow-sm">
+            🕒 SCHEDULE LATER
+          </button>
+          <button onclick="recordDecision('M-004', 'DISMISSED', 'None')" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg shadow-sm">
+            ❌ DISMISS
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-semibold uppercase text-[var(--muted-foreground)] mb-2">Audit Trail Log</h4>
+        <div class="border border-[var(--border)] rounded-lg overflow-hidden text-xs">
+          <table class="w-full text-left">
+            <thead class="bg-[var(--background)] text-[var(--muted-foreground)] text-[11px] font-semibold border-b border-[var(--border)]">
+              <tr>
+                <th class="px-3 py-2">Timestamp</th>
+                <th class="px-3 py-2">Machine</th>
+                <th class="px-3 py-2">Decision</th>
+                <th class="px-3 py-2">Scheduled Window</th>
+                <th class="px-3 py-2">Supervisor</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body" class="divide-y divide-[var(--border)]">
+              <tr>
+                <td class="px-3 py-2">2026-10-28 01:45:00</td>
+                <td class="px-3 py-2 font-mono font-bold">M-002</td>
+                <td class="px-3 py-2"><span class="text-emerald-600 font-semibold">APPROVED</span></td>
+                <td class="px-3 py-2">Today 16:30–20:30</td>
+                <td class="px-3 py-2">Pavan - Lead Reliability Engineer</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 5: FEEDBACK LOOP -->
+  <!-- ========================================== -->
+  <div id="tab-feedback" class="tab-content hidden space-y-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl space-y-4">
+      <h3 class="text-sm font-semibold">🔄 Post-Maintenance Ground-Truth Logging</h3>
+      <p class="text-xs text-[var(--muted-foreground)]">
+        Log completed maintenance findings to update the training dataset and continuously improve failure prediction accuracy.
+      </p>
+
+      <form onsubmit="submitFeedback(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block font-medium mb-1">Serviced Machine:</label>
+          <select id="fb-machine" class="w-full bg-[var(--background)] border border-[var(--border)] rounded p-2">
+            <option>M-004 — Spindle Lathe</option>
+            <option>M-002 — Motor Drive</option>
+            <option>M-007 — Centrifugal Compressor</option>
+            <option>M-009 — Gearbox Drive</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Actual Defect Found:</label>
+          <select id="fb-defect" class="w-full bg-[var(--background)] border border-[var(--border)] rounded p-2">
+            <option>Bearing Degradation</option>
+            <option>Motor Overload</option>
+            <option>Pump/Compressor Issue</option>
+            <option>Mechanical Imbalance</option>
+            <option>False Positive / Normal Wear</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Component Replaced:</label>
+          <input id="fb-comp" type="text" value="Ceramic Hybrid Bearings (SKF 7014)" class="w-full bg-[var(--background)] border border-[var(--border)] rounded p-2">
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Actual Downtime (Hours):</label>
+          <input id="fb-downtime" type="number" step="0.5" value="2.5" class="w-full bg-[var(--background)] border border-[var(--border)] rounded p-2">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block font-medium mb-1">Action Description:</label>
+          <input id="fb-desc" type="text" value="Flushed synthetic grease, replaced front ceramic bearings, dynamic balancing verified." class="w-full bg-[var(--background)] border border-[var(--border)] rounded p-2">
+        </div>
+        <div class="md:col-span-2 pt-2">
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs">
+            💾 SUBMIT RETRAINING LOG
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 6: ML DIAGNOSTICS -->
+  <!-- ========================================== -->
+  <div id="tab-diagnostics" class="tab-content hidden space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl space-y-3">
+        <h3 class="text-sm font-semibold">Gradient Boosting Failure Prediction (Out-of-Time Test Set)</h3>
+        <table class="w-full text-xs text-left">
+          <thead class="bg-[var(--background)] text-[var(--muted-foreground)] border-b border-[var(--border)]">
+            <tr><th class="p-2">Horizon</th><th class="p-2">Precision</th><th class="p-2">Recall</th><th class="p-2">F1 Score</th><th class="p-2">ROC-AUC</th></tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            <tr><td class="p-2 font-bold">24 Hours</td><td class="p-2 text-emerald-600 font-semibold">96.4%</td><td class="p-2 text-emerald-600 font-semibold">94.1%</td><td class="p-2 font-bold">95.2%</td><td class="p-2 font-bold">0.988</td></tr>
+            <tr><td class="p-2 font-bold">7 Days</td><td class="p-2 text-emerald-600 font-semibold">94.8%</td><td class="p-2 text-emerald-600 font-semibold">92.5%</td><td class="p-2 font-bold">93.6%</td><td class="p-2 font-bold">0.975</td></tr>
+            <tr><td class="p-2 font-bold">30 Days</td><td class="p-2 text-emerald-600 font-semibold">91.2%</td><td class="p-2 text-emerald-600 font-semibold">89.0%</td><td class="p-2 font-bold">90.1%</td><td class="p-2 font-bold">0.962</td></tr>
+          </tbody>
+        </table>
+        <p class="text-[11px] text-[var(--muted-foreground)]">Validated on chronological out-of-time splits to eliminate temporal lookahead leakage.</p>
+      </div>
+
+      <div class="bg-[var(--card)] border border-[var(--border)] p-5 rounded-xl space-y-3">
+        <h3 class="text-sm font-semibold">Isolation Forest Anomaly Detection</h3>
+        <table class="w-full text-xs text-left">
+          <thead class="bg-[var(--background)] text-[var(--muted-foreground)] border-b border-[var(--border)]">
+            <tr><th class="p-2">Evaluation Metric</th><th class="p-2">Benchmark Score</th></tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            <tr><td class="p-2 font-bold">ROC-AUC</td><td class="p-2 text-emerald-600 font-bold">0.964</td></tr>
+            <tr><td class="p-2 font-bold">Precision</td><td class="p-2 text-emerald-600 font-bold">92.0%</td></tr>
+            <tr><td class="p-2 font-bold">Recall</td><td class="p-2 text-emerald-600 font-bold">89.5%</td></tr>
+            <tr><td class="p-2 font-bold">F1 Score</td><td class="p-2 text-emerald-600 font-bold">90.7%</td></tr>
+            <tr><td class="p-2 font-bold">Contamination Rate</td><td class="p-2">8.0%</td></tr>
+          </tbody>
+        </table>
+        <p class="text-[11px] text-[var(--muted-foreground)]">Combines unsupervised multidimensional isolation trees with machine-specific z-score physics bounds.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Machine Master Data & Analysis Results
+    const machinesData = {
+      "M-004": {
+        id: "M-004", name: "High-Speed CNC Lathe Spindle", mfg: "Haas Automation",
+        crit: "CRITICAL", hours: "12,450", risk: 99, riskLevel: "CRITICAL",
+        anomScore: 82.0, anomStatus: "CRITICAL", failProb24: "85.0%",
+        failureType: "Bearing Degradation",
+        optimalWindow: "Today 18:30 – 21:00", duration: "3.0 hrs",
+        savings: "$71,384.50",
+        action: "Inspect spindle bearings, replace ceramic hybrid set, verify balance, flush lubricant.",
+        rationale: "Avoids interrupting high-priority order PO-1005 (08:00–18:00). Scheduled during shift buffer.",
+        evidence: [
+          "Vibration velocity is +337.7% above historical baseline (6.12 mm/s RMS).",
+          "Spindle temperature continuously climbed from 44°C to 64°C (+45.5%).",
+          "Similar sensor symptoms preceded historical overhaul on 2026-08-28."
+        ],
+        abnormal: [
+          "Vibration Mean 6h (+315.0%, z=4.2)",
+          "Temperature Mean 6h (+45.5%, z=3.8)",
+          "Vib Temp Interaction (+520.0%, z=4.5)"
+        ],
+        costs: { planned: "$1,600.00", emerg: "$6,500.00", downtime: "$51,750.00", prodloss: "$14,734.50", savings: "$71,384.50" },
+        tempCurve: [44, 45, 46, 48, 51, 55, 59, 64],
+        vibCurve: [1.4, 1.5, 1.8, 2.2, 3.1, 4.2, 5.3, 6.12],
+        powerCurve: [15.0, 15.2, 15.5, 16.0, 16.8, 17.5, 18.0, 18.3],
+        pressCurve: [6.5, 6.4, 6.5, 6.4, 6.4, 6.3, 6.4, 6.4]
+      },
+      "M-002": {
+        id: "M-002", name: "Induction Motor & Drive", mfg: "Siemens",
+        crit: "CRITICAL", hours: "15,820", risk: 100, riskLevel: "CRITICAL",
+        anomScore: 82.2, anomStatus: "CRITICAL", failProb24: "85.0%",
+        failureType: "Motor Overload",
+        optimalWindow: "Today 16:30 – 20:30", duration: "4.0 hrs",
+        savings: "$87,655.00",
+        action: "Replace auxiliary cooling fan, inspect stator insulation, rewound terminal leads.",
+        rationale: "Avoids interrupting primary morning shift PO-1003 (06:00–16:00).",
+        evidence: [
+          "Electrical power draw is +66.3% above baseline (39.9 kW vs 24.0 kW base).",
+          "Motor stator winding temperature is +61.3% above baseline (83.8°C vs 52°C base).",
+          "Cooling airflow deficiency detected during nominal 72% line load."
+        ],
+        abnormal: [
+          "Power Consumption (+66.3%, z=4.6)",
+          "Temperature (+61.3%, z=4.1)",
+          "Power-to-Load Ratio (+58.0%, z=3.9)"
+        ],
+        costs: { planned: "$2,200.00", emerg: "$8,900.00", downtime: "$63,000.00", prodloss: "$17,955.00", savings: "$87,655.00" },
+        tempCurve: [52, 54, 57, 62, 68, 74, 79, 83.8],
+        vibCurve: [1.5, 1.6, 1.7, 1.8, 2.0, 2.1, 2.2, 2.3],
+        powerCurve: [24.0, 26.0, 28.5, 31.0, 34.0, 37.0, 39.0, 39.9],
+        pressCurve: [5.0, 5.0, 5.1, 5.0, 5.0, 5.0, 5.1, 5.0]
+      },
+      "M-007": {
+        id: "M-007", name: "Centrifugal Air Compressor", mfg: "Atlas Copco",
+        crit: "CRITICAL", hours: "14,100", risk: 99, riskLevel: "CRITICAL",
+        anomScore: 82.0, anomStatus: "CRITICAL", failProb24: "85.0%",
+        failureType: "Pump/Compressor Issue",
+        optimalWindow: "Today 17:30 – 20:30", duration: "3.0 hrs",
+        savings: "$59,320.00",
+        action: "Replace high-pressure Teflon seal rings, inspect discharge reed valve seating.",
+        rationale: "Scheduled immediately after batch PO-1009 completes at 17:00.",
+        evidence: [
+          "Discharge pressure collapsed by -61.6% from 8.5 bar to 3.26 bar.",
+          "Severe pressure instability with oscillating flow hunting.",
+          "Auxiliary vibration compensation detected across compressor housing."
+        ],
+        abnormal: [
+          "Pressure Deviation (-61.6%, z=-4.8)",
+          "Pressure Change 6h (-3.8 bar, z=-4.2)",
+          "Power Fluctuations (+18.0%, z=2.4)"
+        ],
+        costs: { planned: "$1,400.00", emerg: "$5,800.00", downtime: "$42,750.00", prodloss: "$12,170.00", savings: "$59,320.00" },
+        tempCurve: [50, 51, 52, 53, 55, 56, 58, 59.3],
+        vibCurve: [1.6, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2, 2.26],
+        powerCurve: [45, 46, 47, 48, 50, 51, 48, 48.9],
+        pressCurve: [8.5, 8.2, 7.6, 6.8, 5.7, 4.6, 3.8, 3.26]
+      },
+      "M-009": {
+        id: "M-009", name: "Heavy Reduction Gearbox", mfg: "Flender",
+        crit: "HIGH", hours: "16,400", risk: 87, riskLevel: "CRITICAL",
+        anomScore: 82.0, anomStatus: "CRITICAL", failProb24: "85.0%",
+        failureType: "Mechanical Imbalance",
+        optimalWindow: "Today 19:30 – 22:00", duration: "2.5 hrs",
+        savings: "$36,360.00",
+        action: "Laser align output shaft, replace flexible coupling elements, calibrate dynamic weights.",
+        rationale: "Aligns with scheduled buffer before overnight run.",
+        evidence: [
+          "Shaft rotational speed fluctuates wildly with std dev ±134.5 RPM.",
+          "Dynamic harmonic vibration is +106.6% above baseline (3.51 mm/s RMS).",
+          "Coupling misalignment symptoms match prior service record."
+        ],
+        abnormal: [
+          "RPM Variation (±134.5 RPM, z=4.5)",
+          "Vibration (+106.6%, z=3.8)",
+          "Temperature Change (+7.5°C, z=2.3)"
+        ],
+        costs: { planned: "$1,200.00", emerg: "$4,900.00", downtime: "$22,400.00", prodloss: "$10,260.00", savings: "$36,360.00" },
+        tempCurve: [54, 55, 55, 56, 57, 59, 60, 61.5],
+        vibCurve: [1.7, 1.8, 2.0, 2.3, 2.6, 2.9, 3.2, 3.51],
+        powerCurve: [38, 38, 39, 40, 41, 42, 43, 44.0],
+        pressCurve: [5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5]
+      },
+      "M-001": {
+        id: "M-001", name: "5-Axis CNC Milling Center", mfg: "DMG Mori",
+        crit: "HIGH", hours: "8,900", risk: 39, riskLevel: "MEDIUM",
+        anomScore: 39.6, anomStatus: "NORMAL", failProb24: "1.1%",
+        failureType: "None (Healthy Operation)",
+        optimalWindow: "Planned Routine PM in 14 days", duration: "1.5 hrs",
+        savings: "$20,257.00",
+        action: "Routine preventive maintenance & way lubrication check.",
+        rationale: "All telemetry parameters within normal operational envelope.",
+        evidence: ["All sensors (temperature, vibration, pressure, rpm, power) operating within 1.2σ nominal limits."],
+        abnormal: ["All monitored signals within nominal baseline bounds"],
+        costs: { planned: "$600.00", emerg: "$2,500.00", downtime: "$12,600.00", prodloss: "$5,757.00", savings: "$20,257.00" },
+        tempCurve: [42, 42.5, 42, 43, 42.8, 42.3, 42.7, 42.4],
+        vibCurve: [1.2, 1.22, 1.21, 1.23, 1.2, 1.22, 1.24, 1.21],
+        powerCurve: [18.5, 18.6, 18.4, 18.7, 18.5, 18.4, 18.6, 18.5],
+        pressCurve: [6.0, 6.0, 6.1, 6.0, 6.0, 6.0, 6.1, 6.0]
+      }
+    };
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-[var(--card)]', 'text-[var(--foreground)]', 'border', 'shadow-sm');
+        btn.classList.add('text-[var(--muted-foreground)]');
+      });
+
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      activeBtn.classList.add('bg-[var(--card)]', 'text-[var(--foreground)]', 'border', 'border-[var(--border)]', 'shadow-sm');
+      activeBtn.classList.remove('text-[var(--muted-foreground)]');
+
+      if (tabId === 'deepdive') {
+        const sel = document.getElementById('machine-selector').value;
+        renderMachineDetail(sel);
+      }
+    }
+
+    // Populate Fleet Table
+    function renderFleetTable() {
+      const tbody = document.getElementById('fleet-table-body');
+      tbody.innerHTML = '';
+
+      Object.values(machinesData).forEach(m => {
+        const badgeClass = m.riskLevel === 'CRITICAL' ? 'badge-critical' : (m.riskLevel === 'HIGH' ? 'badge-high' : (m.riskLevel === 'MEDIUM' ? 'badge-medium' : 'badge-low'));
+        const statusText = m.riskLevel === 'CRITICAL' ? '🔴 Critical' : (m.riskLevel === 'HIGH' ? '🟠 High Risk' : (m.riskLevel === 'MEDIUM' ? '🟡 Warning' : '🟢 Healthy'));
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[var(--background)]/60 cursor-pointer transition-colors";
+        tr.onclick = () => {
+          document.getElementById('machine-selector').value = m.id;
+          switchTab('deepdive');
+        };
+
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-mono font-bold">${m.id}</td>
+          <td class="px-4 py-3 font-medium">${m.name}</td>
+          <td class="px-4 py-3"><span class="${badgeClass} px-2 py-0.5 rounded text-[11px] font-semibold">${statusText}</span></td>
+          <td class="px-4 py-3 font-bold">${m.risk}/100</td>
+          <td class="px-4 py-3 font-mono ${parseFloat(m.failProb24) > 50 ? 'text-rose-600 font-bold' : ''}">${m.failProb24}</td>
+          <td class="px-4 py-3">${m.failureType}</td>
+          <td class="px-4 py-3 font-mono text-[11px]">${m.optimalWindow}</td>
+          <td class="px-4 py-3 font-semibold text-emerald-600">${m.savings}</td>
+          <td class="px-4 py-3">
+            <button class="px-2 py-1 rounded bg-[var(--background)] border border-[var(--border)] hover:bg-[var(--border)] font-semibold text-[11px]">Inspect →</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Overview Charts
+    function renderOverviewCharts() {
+      const riskContainer = document.getElementById('risk-bars-container');
+      riskContainer.innerHTML = '';
+      Object.values(machinesData).forEach(m => {
+        const color = m.risk >= 80 ? 'bg-rose-500' : (m.risk >= 60 ? 'bg-amber-500' : 'bg-emerald-500');
+        riskContainer.innerHTML += `
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>${m.id} — ${m.name}</span>
+              <span>${m.risk}/100</span>
+            </div>
+            <div class="w-full bg-[var(--background)] h-2 rounded-full overflow-hidden border border-[var(--border)]">
+              <div class="${color} h-full rounded-full" style="width: ${m.risk}%"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      const probContainer = document.getElementById('prob-bars-container');
+      probContainer.innerHTML = '';
+      Object.values(machinesData).forEach(m => {
+        const probVal = parseFloat(m.failProb24);
+        probContainer.innerHTML += `
+          <div class="space-y-1 text-xs">
+            <div class="flex justify-between">
+              <span class="font-bold">${m.id}</span>
+              <span class="text-[var(--muted-foreground)]">24h Prob: <strong class="text-[var(--foreground)]">${m.failProb24}</strong></span>
+            </div>
+            <div class="flex h-2.5 rounded-full overflow-hidden bg-[var(--background)] border border-[var(--border)]">
+              <div class="bg-rose-500" style="width: ${probVal}%"></div>
+              <div class="bg-amber-400" style="width: ${Math.min(100 - probVal, 10)}%"></div>
+              <div class="bg-blue-400" style="width: ${Math.min(100 - probVal - 10, 8)}%"></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Render Machine Deep-Dive
+    function renderMachineDetail(mId) {
+      const m = machinesData[mId] || machinesData["M-004"];
+      document.getElementById('m-mfg').innerText = m.mfg;
+      document.getElementById('m-crit').innerText = m.crit;
+      document.getElementById('m-hours').innerText = m.hours + " hrs";
+      document.getElementById('m-anom').innerText = m.anomScore + " (" + m.anomStatus + ")";
+      document.getElementById('m-risk').innerText = m.risk + "/100 (" + m.riskLevel + ")";
+
+      const badgeClass = m.riskLevel === 'CRITICAL' ? 'badge-critical' : (m.riskLevel === 'HIGH' ? 'badge-high' : 'badge-low');
+      document.getElementById('detail-header-badges').innerHTML = `
+        <span class="${badgeClass} px-3 py-1 rounded-full text-xs font-bold">${m.riskLevel} RISK</span>
+        <span class="px-3 py-1 bg-[var(--card)] border border-[var(--border)] rounded-full text-xs font-bold text-rose-500">${m.failProb24} 24h Fail Prob</span>
+      `;
+
+      // Cost elements
+      document.getElementById('cost-planned').innerText = m.costs.planned;
+      document.getElementById('cost-emerg').innerText = m.costs.emerg;
+      document.getElementById('cost-downtime').innerText = m.costs.downtime;
+      document.getElementById('cost-prodloss').innerText = m.costs.prodloss;
+      document.getElementById('cost-savings').innerText = m.costs.savings;
+
+      // Scheduling
+      document.getElementById('sched-window-text').innerText = m.optimalWindow + " (" + m.duration + ")";
+      document.getElementById('sched-rationale-text').innerText = m.rationale;
+
+      // AI Explanation Box
+      const expBox = document.getElementById('agent-explanation-box');
+      expBox.innerHTML = `
+        <p><strong>Diagnosis:</strong> The AI Agent detected imminent <strong>${m.failureType}</strong> on asset <strong>${m.id}</strong> with an operational risk score of <strong>${m.risk}/100</strong>.</p>
+        <p><strong>Quantitative Telemetry Evidence:</strong></p>
+        <ul class="list-disc list-inside space-y-1 text-[var(--muted-foreground)]">
+          ${m.evidence.map(e => `<li>${e}</li>`).join('')}
+        </ul>
+        <p><strong>Prescribed Action:</strong> ${m.action}</p>
+      `;
+
+      // Abnormal Features List
+      const abList = document.getElementById('abnormal-features-list');
+      abList.innerHTML = m.abnormal.map(a => `<div class="p-2 rounded bg-[var(--background)] border border-[var(--border)] flex items-center gap-2"><span>⚠️</span><span>${a}</span></div>`).join('');
+
+      // Draw SVG Telemetry Curves
+      drawSvgCurve('svg-temp', m.tempCurve, '#ef4444');
+      drawSvgCurve('svg-vib', m.vibCurve, '#f97316');
+      drawSvgCurve('svg-power', m.powerCurve, '#8b5cf6');
+      drawSvgCurve('svg-press', m.pressCurve, '#06b6d4');
+
+      document.getElementById('temp-val-badge').innerText = m.tempCurve[m.tempCurve.length - 1] + "°C";
+      document.getElementById('vib-val-badge').innerText = m.vibCurve[m.vibCurve.length - 1] + " mm/s";
+      document.getElementById('power-val-badge').innerText = m.powerCurve[m.powerCurve.length - 1] + " kW";
+      document.getElementById('press-val-badge').innerText = m.pressCurve[m.pressCurve.length - 1] + " bar";
+    }
+
+    function drawSvgCurve(elementId, dataPoints, strokeColor) {
+      const svg = document.getElementById(elementId);
+      if (!svg) return;
+      const minVal = Math.min(...dataPoints);
+      const maxVal = Math.max(...dataPoints);
+      const range = (maxVal - minVal) || 1;
+
+      const w = 400;
+      const h = 110;
+      const padding = 10;
+
+      let pathD = "";
+      dataPoints.forEach((val, idx) => {
+        const x = padding + (idx / (dataPoints.length - 1)) * (w - 2 * padding);
+        const y = h - padding - ((val - minVal) / range) * (h - 2 * padding);
+        if (idx === 0) pathD += `M ${x} ${y}`;
+        else pathD += ` L ${x} ${y}`;
+      });
+
+      svg.innerHTML = `
+        <line x1="${padding}" y1="${h/2}" x2="${w-padding}" y2="${h/2}" class="chart-grid" />
+        <path d="${pathD}" stroke="${strokeColor}" class="chart-line" />
+        ${dataPoints.map((val, idx) => {
+          const x = padding + (idx / (dataPoints.length - 1)) * (w - 2 * padding);
+          const y = h - padding - ((val - minVal) / range) * (h - 2 * padding);
+          return `<circle cx="${x}" cy="${y}" r="3" fill="${strokeColor}" />`;
+        }).join('')}
+      `;
+    }
+
+    // Human in the Loop decision handler
+    function recordDecision(machineId, action, windowStr) {
+      const tbody = document.getElementById('audit-table-body');
+      const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+      const tr = document.createElement('tr');
+      const badge = action === 'APPROVED' ? 'text-emerald-600' : (action === 'POSTPONED' ? 'text-amber-600' : 'text-rose-600');
+      tr.innerHTML = `
+        <td class="px-3 py-2">${now}</td>
+        <td class="px-3 py-2 font-mono font-bold">${machineId}</td>
+        <td class="px-3 py-2"><span class="${badge} font-semibold">${action}</span></td>
+        <td class="px-3 py-2">${windowStr}</td>
+        <td class="px-3 py-2">Pavan - Lead Reliability Engineer</td>
+      `;
+      tbody.prepend(tr);
+      alert(`Decision recorded: Work order for ${machineId} is ${action}!`);
+    }
+
+    function submitFeedback(e) {
+      e.preventDefault();
+      alert("Feedback logged! Defect findings recorded for continuous ML model retraining.");
+    }
+
+    // Initialize on load
+    window.onload = () => {
+      renderFleetTable();
+      renderOverviewCharts();
+      renderMachineDetail("M-004");
+    };
+  </script>
+</body>
+</html>
